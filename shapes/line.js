@@ -6,6 +6,7 @@ function Line(x1, y1, x2, y2, strokeStyle = "black") {
   this.y2 = y2;
   this.strokeStyle = strokeStyle;
 
+  // don't like this, rethink it...
   this.setStart = function (x, y) {
     this.x1 = x;
     this.y1 = y;
