@@ -6,6 +6,7 @@ import { RectangleBuilder } from "./shapes/rectangle.js";
   let shapeStroke = "red";
   const canvas = document.getElementById("canvas");
   const context = canvas.getContext("2d");
+  const focusClass = "shapes__element--focus";
 
   canvas.width = window.innerWidth - 200;
   canvas.height = window.innerHeight - 30;
@@ -14,9 +15,9 @@ import { RectangleBuilder } from "./shapes/rectangle.js";
     const prevShape = peekShape();
 
     if (prevShape) {
-      prevShape.classList.remove("shapes__element--focus");
+      prevShape.classList.remove(focusClass);
     }
-    shape.classList.add("shapes__element--focus");
+    shape.classList.add(focusClass);
     selectShape(shape);
   });
 
