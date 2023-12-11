@@ -24,6 +24,7 @@ function Line(x1, y1, x2, y2, strokeStyle = "black") {
     context.moveTo(this.x1, this.y1);
     context.lineTo(this.x2, this.y2);
     context.strokeStyle = this.strokeStyle;
+    context.lineWidth = 20;
     context.stroke();
     context.closePath();
   };

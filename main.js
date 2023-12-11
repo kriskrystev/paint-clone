@@ -41,13 +41,15 @@ import { RectangleBuilder } from "./shapes/rectangle.js";
 
   // handlers for start and stop draw
   canvas.addEventListener("mousedown", (event) => {
-    animationFrameId = window.requestAnimationFrame(loop);
+    const isLine = peekShape() && peekShape().dataset.shapeType === "line";
 
-    if (peekShape() && peekShape().dataset.shapeType === "line") {
+    if (isLine) {
       const { x, y } = getCursorPosition(canvas, event);
       currentlyDrawnShape = lineBuilder.setStart(x, y).setEnd(x, y).build();
+      layers[0].shapes.push(currentlyDrawnShape);
 
       drag = true;
+      animationFrameId = window.requestAnimationFrame(loop);
     }
   });
 
@@ -59,32 +61,34 @@ import { RectangleBuilder } from "./shapes/rectangle.js";
   });
 
   canvas.addEventListener("mouseup", (event) => {
-    if (peekShape() && peekShape().dataset.shapeType === "line") {
+    drag = false;
+    const isLine = peekShape() && peekShape().dataset.shapeType === "line";
+
+    if (isLine) {
       const { x, y } = getCursorPosition(canvas, event);
       currentlyDrawnShape.setEnd(x, y);
-      layers[0].shapes.push(currentlyDrawnShape);
+
+      layers[0].shapes[layers[0].shapes.length - 1] = currentlyDrawnShape;
       currentlyDrawnShape = null;
     }
-    drag = false;
-    if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
+    // window.cancelAnimationFrame(animationFrameId);
   });
 
   canvas.addEventListener("mouseout", (event) => {
-    if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
+    // if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
     drag = false;
   });
 
-  function loop() {
+  function loop(timestamp) {
     context.clearRect(0, 0, canvas.width, canvas.height);
+
     animationFrameId = window.requestAnimationFrame(loop);
 
-    if (drag) {
-      if (currentlyDrawnShape) {
-        currentlyDrawnShape.draw(context);
-        layers[0].shapes.forEach((shape) => shape.draw(context));
-      }
-    }
+    layers[0].shapes.forEach((shape) => {
+      shape.draw(context);
+    });
   }
+  animationFrameId = window.requestAnimationFrame(loop);
 
   function reset() {
     context.clearRect(0, 0, canvas.width, canvas.height);

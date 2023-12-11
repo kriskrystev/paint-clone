@@ -140,6 +140,24 @@
         border-radius: 50%;
       }
 
+      .colours {
+        border: 2px solid var(--color-surface-mixed-300);
+        display: grid;
+        gap: 0.25rem;
+        padding: 0.25rem;
+        grid-template-rows: repeat(2, 1fr);
+        grid-template-columns: repeat(8, 1fr);
+        margin-top: 0.5rem;
+      }
+
+      .colours__circle {
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background-color: #121212;
+      }
+
       /* To remove the scrollbars */
     </style>
   </head>
@@ -169,6 +187,27 @@
             data-shape-type="rectangle"
             class="shapes__element shapes__element-rectangle shapes__element--hover"
           ></div>
+        </div>
+
+        <p class="nav__label" style="margin-top: 0.5rem">Colours</p>
+
+        <div class="colours">
+          <div class="colours__circle"></div>
+          <div class="colours__circle"></div>
+          <div class="colours__circle"></div>
+          <div class="colours__circle"></div>
+          <div class="colours__circle"></div>
+          <div class="colours__circle"></div>
+          <div class="colours__circle"></div>
+          <div class="colours__circle"></div>
+          <div class="colours__circle"></div>
+          <div class="colours__circle"></div>
+          <div class="colours__circle"></div>
+          <div class="colours__circle"></div>
+          <div class="colours__circle"></div>
+          <div class="colours__circle"></div>
+          <div class="colours__circle"></div>
+          <div class="colours__circle"></div>
         </div>
       </div>
     </div>
