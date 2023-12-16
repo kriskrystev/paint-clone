@@ -1,10 +1,14 @@
+import { buildersMap } from "./builders/builders-map.js";
 import getCursorPosition from "./cursor-helper.js";
 import { initShapesClickListenersWith, initShapes } from "./shape-listeners.js";
-import { LineBuilder } from "./shapes/line.js";
-import { RectangleBuilder } from "./shapes/rectangle.js";
+import { mouseDownStrategies } from "./strategy/initializing-shapes/strategies-map.js";
+import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
 
 (function () {
   let shapeStroke = "red";
+  let shapeMouseMoveStrategy = null;
+  let shapeBuilder = null;
+
   const leftPanelWidth = 200;
   const headerHeight = 30;
 
@@ -26,12 +30,12 @@ import { RectangleBuilder } from "./shapes/rectangle.js";
     }
     shape.classList.add(focusClass);
     selectShape(shape);
+
+    shapeMouseMoveStrategy = new strategies[shape.dataset.shapeType]();
+    shapeBuilder = new buildersMap[shape.dataset.shapeType]();
   });
   let drag = false;
   let currentlyDrawnShape = null;
-
-  const lineBuilder = new LineBuilder();
-  const rectangleBuilder = new RectangleBuilder();
 
   const layers = [
     {
@@ -44,44 +48,32 @@ import { RectangleBuilder } from "./shapes/rectangle.js";
 
   // handlers for start and stop draw
   canvas.addEventListener("mousedown", (event) => {
-    const isLine = peekShape() && peekShape().dataset.shapeType === "line";
-    const { x, y } = getCursorPosition(canvas, event);
+    const shape = peekShape();
 
-    if (isLine) {
-      currentlyDrawnShape = lineBuilder.setStart(x, y).setEnd(x, y).build();
-      layers[0].shapes.push(currentlyDrawnShape);
+    if (shape) {
+      const { x, y } = getCursorPosition(canvas, event);
+      const mouseDownDrawStrategy = new mouseDownStrategies[
+        shape.dataset.shapeType
+      ]();
 
-      drag = true;
-      animationFrameId = window.requestAnimationFrame(loop);
+      mouseDownDrawStrategy.setPosition(x, y);
+      mouseDownDrawStrategy.setShape(currentlyDrawnShape);
+      mouseDownDrawStrategy.setBuilder(shapeBuilder);
+      currentlyDrawnShape = mouseDownDrawStrategy.initShape();
     }
 
-    if (peekShape() && peekShape().dataset.shapeType === "rectangle") {
-      currentlyDrawnShape = rectangleBuilder
-        .setX(x)
-        .setY(y)
-        .setWidth(0)
-        .setHeight(0)
-        .build();
-      layers[0].shapes.push(currentlyDrawnShape);
-
-      drag = true;
-      animationFrameId = window.requestAnimationFrame(loop);
-    }
+    layers[0].shapes.push(currentlyDrawnShape);
+    drag = true;
+    animationFrameId = window.requestAnimationFrame(loop);
   });
 
   canvas.addEventListener("mousemove", (event) => {
     if (drag) {
       const { x, y } = getCursorPosition(canvas, event);
 
-      if (peekShape() && peekShape().dataset.shapeType === "line") {
-        currentlyDrawnShape.setEnd(x, y);
-      }
-
-      if (peekShape() && peekShape().dataset.shapeType === "rectangle") {
-        const x1 = currentlyDrawnShape.x;
-        const y1 = currentlyDrawnShape.y;
-        currentlyDrawnShape.setWidth(x - x1).setHeight(y - y1);
-      }
+      shapeMouseMoveStrategy.setShape(currentlyDrawnShape);
+      shapeMouseMoveStrategy.setPosition(x, y);
+      shapeMouseMoveStrategy.draw();
     }
   });
 
@@ -92,27 +84,11 @@ import { RectangleBuilder } from "./shapes/rectangle.js";
 
     if (isLine) {
       currentlyDrawnShape.setEnd(x, y);
-      const lastShapeIdx = layers[0].shapes.length - 1;
-
-      layers[0].shapes[lastShapeIdx] = currentlyDrawnShape;
-    }
-
-    if (peekShape() && peekShape().dataset.shapeType === "rectangle") {
-      const x1 = currentlyDrawnShape.x;
-      const y1 = currentlyDrawnShape.y;
-      currentlyDrawnShape
-        .setWidth(Math.abs(x - x1))
-        .setHeight(Math.abs(y - y1));
     }
 
     const lastShapeIdx = layers[0].shapes.length - 1;
-
     layers[0].shapes[lastShapeIdx] = currentlyDrawnShape;
     currentlyDrawnShape = null;
-  });
-
-  canvas.addEventListener("mouseout", (event) => {
-    drag = false;
   });
 
   function loop(timestamp) {
