@@ -4,6 +4,7 @@ export function Line(x1, y1, x2, y2, strokeStyle = "black") {
 
   this.x2 = x2;
   this.y2 = y2;
+  // TODO: Introduce decorators for coloring
   this.strokeStyle = strokeStyle;
 
   // don't like this, rethink it...

@@ -5,6 +5,7 @@ import { mouseDownStrategies } from "./strategy/initializing-shapes/strategies-m
 import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
 
 (function () {
+  // ======================== CONFIG END ========================
   let shapeStroke = "red";
   let shapeMouseMoveStrategy = null;
   let shapeBuilder = null;
@@ -22,6 +23,7 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
 
   const { peekShape, selectShape, shapeTypes } = initShapes();
   resetButton.addEventListener("click", reset);
+
   const listeners = initShapesClickListenersWith(shapeTypes, function (shape) {
     const prevShape = peekShape();
 
@@ -46,7 +48,9 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
 
   let animationFrameId = null;
 
-  // handlers for start and stop draw
+  // ======================== CONFIG END ========================
+
+  // ======================== DRAW HANDLERS START ========================
   canvas.addEventListener("mousedown", (event) => {
     const shape = peekShape();
 
@@ -60,10 +64,11 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
       mouseDownDrawStrategy.setShape(currentlyDrawnShape);
       mouseDownDrawStrategy.setBuilder(shapeBuilder);
       currentlyDrawnShape = mouseDownDrawStrategy.initShape();
+
+      layers[0].shapes.push(currentlyDrawnShape);
+      drag = true;
     }
 
-    layers[0].shapes.push(currentlyDrawnShape);
-    drag = true;
     animationFrameId = window.requestAnimationFrame(loop);
   });
 
@@ -91,6 +96,9 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
     currentlyDrawnShape = null;
   });
 
+  // ======================== DRAW HANDLERS END ========================
+
+  // ======================== ANIMATION START ========================
   function loop(timestamp) {
     context.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -107,4 +115,5 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
     window.cancelAnimationFrame(animationFrameId);
     layers[0].shapes = [];
   }
+  // ======================== ANIMATION END ========================
 })();

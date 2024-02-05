@@ -1,4 +1,4 @@
-export function RectangleMouseMoveStrategy() {
+export function MouseMoveRectangleDrawStrategy() {
   this.shape = null;
   this.x = 0;
   this.y = 0;

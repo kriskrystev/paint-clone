@@ -1,10 +1,10 @@
-export function RectangleMouseDownStrategy() {
-  this.shape = null;
-  this.builder = null;
-  this.x = 0;
-  this.y = 0;
+import { BaseStrategy } from "./base.strategy.js";
+
+export function MouseDownRectangleDrawStrategy() {
+  BaseStrategy.call(this);
 
   this.initShape = function () {
+    // RectangleBuilder
     this.shape = this.builder
       .setX(this.x)
       .setY(this.y)
@@ -13,17 +13,16 @@ export function RectangleMouseDownStrategy() {
       .build();
     return this.shape;
   };
-
-  this.setShape = function (shape) {
-    this.shape = shape;
-  };
-
-  this.setBuilder = function (builder) {
-    this.builder = builder;
-  };
-
-  this.setPosition = function (x, y) {
-    this.x = x;
-    this.y = y;
-  };
 }
+
+MouseDownRectangleDrawStrategy.prototype = Object.create(
+  BaseStrategy.prototype,
+  {
+    constructor: {
+      value: MouseDownRectangleDrawStrategy,
+      enumerable: false,
+      writable: true,
+      configurable: true,
+    },
+  }
+);

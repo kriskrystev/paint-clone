@@ -1,6 +1,6 @@
 // there's a bit of repeating going on here
 // if more and more strategies start doing this - refactor and abstract the logic
-export function LineMouseMoveStrategy() {
+export function MouseMoveLineDrawStrategy() {
   this.shape = null;
   this.x = 0;
   this.y = 0;

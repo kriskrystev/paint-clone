@@ -1,27 +1,23 @@
-export function LineMouseDownStrategy() {
-  this.shape = null;
-  this.builder = null;
-  this.x = 0;
-  this.y = 0;
+import { BaseStrategy } from "./base.strategy.js";
+
+export function MouseDownLineDrawStrategy() {
+  BaseStrategy.call(this);
 
   this.initShape = function () {
+    // LineBuilder
     this.shape = this.builder
       .setStart(this.x, this.y)
       .setEnd(this.x, this.y)
       .build();
     return this.shape;
   };
-
-  this.setShape = function (shape) {
-    this.shape = shape;
-  };
-
-  this.setBuilder = function (builder) {
-    this.builder = builder;
-  };
-
-  this.setPosition = function (x, y) {
-    this.x = x;
-    this.y = y;
-  };
 }
+
+MouseDownLineDrawStrategy.prototype = Object.create(BaseStrategy.prototype, {
+  constructor: {
+    value: MouseDownLineDrawStrategy,
+    enumerable: false,
+    writable: true,
+    configurable: true,
+  },
+});

@@ -1,7 +1,7 @@
-import { LineMouseDownStrategy } from "./line-mousedown.strategy.js";
-import { RectangleMouseDownStrategy } from "./rectangle-mousedown.strategy.js";
+import { MouseDownLineDrawStrategy } from "./line-mousedown.strategy.js";
+import { MouseDownRectangleDrawStrategy } from "./rectangle-mousedown.strategy.js";
 
 export const mouseDownStrategies = {
-  line: LineMouseDownStrategy,
-  rectangle: RectangleMouseDownStrategy,
+  line: MouseDownLineDrawStrategy,
+  rectangle: MouseDownRectangleDrawStrategy,
 };
