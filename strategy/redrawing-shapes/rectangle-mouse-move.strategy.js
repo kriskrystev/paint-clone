@@ -1,18 +1,21 @@
+import { BaseStrategy } from "./base.strategy.js";
+
 export function MouseMoveRectangleDrawStrategy() {
-  this.shape = null;
-  this.x = 0;
-  this.y = 0;
+  BaseStrategy.call(this);
 
   this.draw = function () {
     this.shape.setWidth(this.x - this.shape.x).setHeight(this.y - this.shape.y);
   };
-
-  this.setPosition = function (x, y) {
-    this.x = x;
-    this.y = y;
-  };
-
-  this.setShape = function (shape) {
-    this.shape = shape;
-  };
 }
+
+MouseMoveRectangleDrawStrategy.prototype = Object.create(
+  BaseStrategy.prototype,
+  {
+    constructor: {
+      value: MouseMoveRectangleDrawStrategy,
+      enumerable: false,
+      writable: true,
+      configurable: true,
+    },
+  }
+);
