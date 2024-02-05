@@ -1,6 +1,7 @@
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 /* to remove the top and left whitespace */
@@ -42,7 +43,37 @@ body {
     --border-radius: 4px;
 }
 
-/* just to be sure these are full screen*/
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+
+
+/* Foreground color classess */
+.surface-mixed-foreground-600 {
+    color: var(--color-surface-mixed-600);
+}
+
+.border-color-surface-mixed-300 {
+    border: 2px solid var(--color-surface-mixed-300);
+}
 
 canvas {
     display: block;
@@ -51,7 +82,7 @@ canvas {
 
 .parent {
     display: grid;
-    grid-template-columns: 200px repeat(4, 1fr);
+    grid-template-columns: 200px repeat(3, 1fr) 200px;
     grid-template-rows: 30px repeat(4, 1fr);
     grid-column-gap: 0px;
     grid-row-gap: 0px;
@@ -150,4 +181,23 @@ canvas {
     border-radius: 50%;
     border: 1px solid rgba(255, 255, 255, 0.3);
     background-color: #121212;
+}
+
+.inspector {
+    background-color: var(--color-surface-mixed-200);
+    padding: 0.5rem;
+    grid-area: 2 / 5 / 6 / 6;
+}
+
+.inspector__layers {
+    max-height: 200px;
+    height: 200px;
+    margin-top: 0.5rem;
+    overflow-y: scroll;
+}
+
+.inspector__layers-layer {
+    height: 50px;
+    border-bottom: 2px solid var(--color-surface-mixed-300);
+    background: var(--color-surface-mixed-100);
 }

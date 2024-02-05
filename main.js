@@ -1,5 +1,5 @@
 import { buildersMap } from "./builders/builders-map.js";
-import getCursorPosition from "./cursor-helper.js";
+import getCursorPosition from "./helpers/cursor-helper.js";
 import { initShapesClickListenersWith, initShapes } from "./shape-listeners.js";
 import { mouseDownStrategies } from "./strategy/initializing-shapes/strategies-map.js";
 import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
