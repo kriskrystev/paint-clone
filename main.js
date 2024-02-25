@@ -1,6 +1,7 @@
 import { buildersMap } from "./builders/builders-map.js";
 import getCursorPosition from "./helpers/cursor-helper.js";
 import { LinkedList } from "./helpers/data-structures/linked-list.js";
+import { LayerHtmlElement } from "./layers/html/layer-html-element.js";
 import { Layer } from "./layers/layer.js";
 import { initShapesClickListenersWith, initShapes } from "./shape-listeners.js";
 import { mouseDownStrategies } from "./strategy/initializing-shapes/strategies-map.js";
@@ -19,6 +20,7 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
   const canvas = document.getElementById("canvas");
   const context = canvas.getContext("2d");
   const focusClass = "shapes__element--focus";
+  const layersContainer = document.getElementById("inspector__layers");
 
   canvas.width = window.innerWidth - leftPanelWidth;
   canvas.height = window.innerHeight - headerHeight;
@@ -44,6 +46,7 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
   let currentLayerIndex = 0;
   const layers = new LinkedList();
   layers.push(new Layer());
+  displayLayerContainers();
 
   let animationFrameId = null;
 
@@ -104,9 +107,12 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
 
     animationFrameId = window.requestAnimationFrame(loop);
 
-    layers.get(currentLayerIndex).val.shapes.forEach((shape) => {
-      shape.draw(context);
-    });
+    const layer = layers.get(currentLayerIndex).val;
+    if (layer.visible) {
+      layer.shapes.forEach((shape) => {
+        shape.draw(context);
+      });
+    }
   }
   animationFrameId = window.requestAnimationFrame(loop);
 
@@ -114,6 +120,20 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
     context.clearRect(0, 0, canvas.width, canvas.height);
     window.cancelAnimationFrame(animationFrameId);
     layers.get(currentLayerIndex).val.shapes = [];
+  }
+
+  function displayLayerContainers() {
+    let current = layers.head;
+    let containers = [];
+
+    if (!current) return null;
+
+    while (current) {
+      containers.push(new LayerHtmlElement(current.val));
+      current = current.next;
+    }
+
+    layersContainer.appendChild(...containers);
   }
   // ======================== ANIMATION END ========================
 })();

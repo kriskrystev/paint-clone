@@ -200,4 +200,9 @@ canvas {
     height: 50px;
     border-bottom: 2px solid var(--color-surface-mixed-300);
     background: var(--color-surface-mixed-100);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
 }
