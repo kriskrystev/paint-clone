@@ -1,5 +1,7 @@
 import { buildersMap } from "./builders/builders-map.js";
 import getCursorPosition from "./helpers/cursor-helper.js";
+import { LinkedList } from "./helpers/data-structures/linked-list.js";
+import { Layer } from "./layers/layer.js";
 import { initShapesClickListenersWith, initShapes } from "./shape-listeners.js";
 import { mouseDownStrategies } from "./strategy/initializing-shapes/strategies-map.js";
 import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
@@ -39,12 +41,10 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
   let drag = false;
   let currentlyDrawnShape = null;
 
-  const layers = [
-    {
-      name: "default",
-      shapes: [],
-    },
-  ];
+  const layers = new LinkedList();
+  layers.push(new Layer());
+
+  debugger;
 
   let animationFrameId = null;
 
