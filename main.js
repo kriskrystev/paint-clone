@@ -41,10 +41,9 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
   let drag = false;
   let currentlyDrawnShape = null;
 
+  let currentLayerIndex = 0;
   const layers = new LinkedList();
   layers.push(new Layer());
-
-  debugger;
 
   let animationFrameId = null;
 
@@ -65,7 +64,7 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
       mouseDownDrawStrategy.setBuilder(shapeBuilder);
       currentlyDrawnShape = mouseDownDrawStrategy.initShape();
 
-      layers[0].shapes.push(currentlyDrawnShape);
+      layers.get(currentLayerIndex).val.shapes.push(currentlyDrawnShape);
       drag = true;
     }
 
@@ -91,8 +90,9 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
       currentlyDrawnShape.setEnd(x, y);
     }
 
-    const lastShapeIdx = layers[0].shapes.length - 1;
-    layers[0].shapes[lastShapeIdx] = currentlyDrawnShape;
+    const lastShapeIdx = layers.get(currentLayerIndex).val.shapes.length - 1;
+    layers.get(currentLayerIndex).val.shapes[lastShapeIdx] =
+      currentlyDrawnShape;
     currentlyDrawnShape = null;
   });
 
@@ -104,7 +104,7 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
 
     animationFrameId = window.requestAnimationFrame(loop);
 
-    layers[0].shapes.forEach((shape) => {
+    layers.get(currentLayerIndex).val.shapes.forEach((shape) => {
       shape.draw(context);
     });
   }
@@ -113,7 +113,7 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
   function reset() {
     context.clearRect(0, 0, canvas.width, canvas.height);
     window.cancelAnimationFrame(animationFrameId);
-    layers[0].shapes = [];
+    layers.get(currentLayerIndex).val.shapes = [];
   }
   // ======================== ANIMATION END ========================
 })();

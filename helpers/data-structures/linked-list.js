@@ -20,10 +20,6 @@ LinkedList.prototype.get = function (idx) {
   let counter = 0;
   let node = this.head;
 
-  if (!node.next) {
-    return null;
-  }
-
   while (counter < idx) {
     node = node.next;
     counter++;
