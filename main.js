@@ -48,7 +48,7 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
   const layers = new LinkedList();
   layers.push(new Layer());
 
-  displayLayerContainers();
+  const { appendHtmlChildToLayers, produceLayer } = displayLayerContainers();
 
   let animationFrameId = null;
 
@@ -138,18 +138,32 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
     let current = layers.head;
     let containers = [];
     let prevHtmlElement = null;
-    let layerNumber = 0;
+    let layerCounter = 0;
 
     if (!current) return null;
 
-    while (current) {
-      const newLayerHtmlElement = new LayerHtmlElement(
-        current.val,
-        layerNumber
+    function produceLayer(listNode) {
+      return attachListenersToLayerHtmlElement(
+        buildLayerHtmlElement(listNode, layerCounter++)
       );
-      // ------------- Custom events -------------
+    }
 
-      newLayerHtmlElement.addEventListener("layer-clicked", (e) => {
+    function incrementNumber() {
+      layerCounter++;
+    }
+
+    function appendHtmlChildToLayers(htmlChildren) {
+      layersContainer.append(...htmlChildren);
+    }
+
+    function buildLayerHtmlElement(listNode, layerNum) {
+      const newLayerHtmlElement = new LayerHtmlElement(listNode.val, layerNum);
+
+      return newLayerHtmlElement;
+    }
+
+    function attachListenersToLayerHtmlElement(htmlElement) {
+      htmlElement.addEventListener("layer-clicked", (e) => {
         const clickedLayer = e.detail.value().layer;
 
         if (currentlySelectedLayer === clickedLayer) {
@@ -160,29 +174,50 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
           prevHtmlElement.classList.remove("inspector__layers-layer--selected");
         }
 
-        newLayerHtmlElement.classList.add("inspector__layers-layer--selected");
-        prevHtmlElement = newLayerHtmlElement;
+        htmlElement.classList.add("inspector__layers-layer--selected");
+        prevHtmlElement = htmlElement;
 
         currentlySelectedLayer = e.detail.value().layer;
         currentLayerIndex = e.detail.value().layerNumber;
       });
 
-      newLayerHtmlElement.addEventListener("layer-name-changed", (e) => {
+      htmlElement.addEventListener("layer-name-changed", (e) => {
         const { layerNumber, newValue } = e.detail.value();
         layers.get(layerNumber).val.name = newValue;
-        const inputElement = newLayerHtmlElement.querySelector("input");
+        const inputElement = htmlElement.querySelector("input");
 
         try {
           inputElement.replaceWith(document.createTextNode(newValue));
         } catch (e) {}
       });
 
-      // ------------- Custom events -------------
-      containers.push(newLayerHtmlElement);
-      current = current.next;
-      layerNumber++;
+      return htmlElement;
     }
 
-    layersContainer.append(...containers);
+    while (current) {
+      const newLayerHtmlElement = attachListenersToLayerHtmlElement(
+        buildLayerHtmlElement(current, layerCounter)
+      );
+      containers.push(newLayerHtmlElement);
+      current = current.next;
+      incrementNumber();
+    }
+
+    appendHtmlChildToLayers(containers);
+
+    return {
+      appendHtmlChildToLayers,
+      produceLayer,
+    };
   }
+
+  document.addEventListener("new-layer", () => {
+    const newLayer = new Layer();
+    const listNode = layers.push(newLayer);
+    const newLayerHtmlElement = produceLayer(listNode);
+    appendHtmlChildToLayers([newLayerHtmlElement]);
+    newLayerHtmlElement
+      .querySelector(".inspector__layers-layer-name")
+      .dispatchEvent(new MouseEvent("dblclick"));
+  });
 })();
