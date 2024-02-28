@@ -194,10 +194,35 @@ canvas {
     height: 200px;
     margin-top: 0.5rem;
     overflow-y: scroll;
+    user-select: none;
 }
 
 .inspector__layers-layer {
     height: 50px;
     border-bottom: 2px solid var(--color-surface-mixed-300);
     background: var(--color-surface-mixed-100);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+}
+
+.inspector__layers-layer--selected {
+    border-left: 2px solid var(--color-primary-600);
+}
+
+.icon--white {
+    filter: contrast(1%);
+}
+
+.clickable {
+    width: 20px;
+    height: 20px;
+    overflow: hidden;
+}
+
+object {
+    width: 100%;
+    pointer-events: none;
 }

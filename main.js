@@ -1,5 +1,8 @@
 import { buildersMap } from "./builders/builders-map.js";
 import getCursorPosition from "./helpers/cursor-helper.js";
+import { LinkedList } from "./helpers/data-structures/linked-list.js";
+import { LayerHtmlElement } from "./layers/html/layer-html-element.js";
+import { Layer } from "./layers/layer.js";
 import { initShapesClickListenersWith, initShapes } from "./shape-listeners.js";
 import { mouseDownStrategies } from "./strategy/initializing-shapes/strategies-map.js";
 import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
@@ -17,6 +20,7 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
   const canvas = document.getElementById("canvas");
   const context = canvas.getContext("2d");
   const focusClass = "shapes__element--focus";
+  const layersContainer = document.getElementById("inspector__layers");
 
   canvas.width = window.innerWidth - leftPanelWidth;
   canvas.height = window.innerHeight - headerHeight;
@@ -39,12 +43,13 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
   let drag = false;
   let currentlyDrawnShape = null;
 
-  const layers = [
-    {
-      name: "default",
-      shapes: [],
-    },
-  ];
+  let currentLayerIndex = 0;
+  let currentlySelectedLayer = null;
+  const layers = new LinkedList();
+  layers.push(new Layer());
+  layers.push(new Layer("aaa"));
+
+  displayLayerContainers();
 
   let animationFrameId = null;
 
@@ -65,7 +70,8 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
       mouseDownDrawStrategy.setBuilder(shapeBuilder);
       currentlyDrawnShape = mouseDownDrawStrategy.initShape();
 
-      layers[0].shapes.push(currentlyDrawnShape);
+      console.log(currentlyDrawnShape);
+      layers.get(currentLayerIndex).val.shapes.push(currentlyDrawnShape);
       drag = true;
     }
 
@@ -91,9 +97,12 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
       currentlyDrawnShape.setEnd(x, y);
     }
 
-    const lastShapeIdx = layers[0].shapes.length - 1;
-    layers[0].shapes[lastShapeIdx] = currentlyDrawnShape;
-    currentlyDrawnShape = null;
+    if (currentlyDrawnShape) {
+      const lastShapeIdx = layers.get(currentLayerIndex).val.shapes.length - 1;
+      layers.get(currentLayerIndex).val.shapes[lastShapeIdx] =
+        currentlyDrawnShape;
+      currentlyDrawnShape = null;
+    }
   });
 
   // ======================== DRAW HANDLERS END ========================
@@ -104,16 +113,61 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
 
     animationFrameId = window.requestAnimationFrame(loop);
 
-    layers[0].shapes.forEach((shape) => {
-      shape.draw(context);
-    });
+    let current = layers.head;
+
+    while (current) {
+      if (current.val.visible) {
+        current.val.shapes.forEach((shape) => {
+          shape.draw(context);
+        });
+      }
+      current = current.next;
+    }
   }
   animationFrameId = window.requestAnimationFrame(loop);
 
   function reset() {
     context.clearRect(0, 0, canvas.width, canvas.height);
     window.cancelAnimationFrame(animationFrameId);
-    layers[0].shapes = [];
+    layers.get(currentLayerIndex).val.shapes = [];
+  }
+
+  function displayLayerContainers() {
+    let current = layers.head;
+    let containers = [];
+    let prevHtmlElement = null;
+    let layerNumber = 0;
+
+    if (!current) return null;
+
+    while (current) {
+      const newLayerHtmlElement = new LayerHtmlElement(
+        current.val,
+        layerNumber
+      );
+      newLayerHtmlElement.addEventListener("layer-clicked", (e) => {
+        const clickedLayer = e.detail.value().layer;
+
+        if (currentlySelectedLayer === clickedLayer) {
+          return;
+        }
+
+        if (prevHtmlElement) {
+          prevHtmlElement.classList.remove("inspector__layers-layer--selected");
+        }
+
+        newLayerHtmlElement.classList.add("inspector__layers-layer--selected");
+        prevHtmlElement = newLayerHtmlElement;
+
+        currentlySelectedLayer = e.detail.value().layer;
+        currentLayerIndex = e.detail.value().layerNumber;
+      });
+      containers.push(newLayerHtmlElement);
+      current = current.next;
+      layerNumber++;
+    }
+
+    layersContainer.append(...containers);
   }
   // ======================== ANIMATION END ========================
 })();
