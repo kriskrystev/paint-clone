@@ -132,6 +132,8 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
     layers.get(currentLayerIndex).val.shapes = [];
   }
 
+  // ======================== ANIMATION END ========================
+
   function displayLayerContainers() {
     let current = layers.head;
     let containers = [];
@@ -145,6 +147,8 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
         current.val,
         layerNumber
       );
+      // ------------- Custom events -------------
+
       newLayerHtmlElement.addEventListener("layer-clicked", (e) => {
         const clickedLayer = e.detail.value().layer;
 
@@ -162,6 +166,17 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
         currentlySelectedLayer = e.detail.value().layer;
         currentLayerIndex = e.detail.value().layerNumber;
       });
+
+      // layers list must change
+
+      newLayerHtmlElement.addEventListener("layer-name-changed", (e) => {
+        const { layerNumber, newValue } = e.detail.value();
+        layers.get(layerNumber).val.name = newValue;
+        const inputElement = newLayerHtmlElement.querySelector("input");
+        inputElement.replaceWith(document.createTextNode(newValue));
+      });
+
+      // ------------- Custom events -------------
       containers.push(newLayerHtmlElement);
       current = current.next;
       layerNumber++;
@@ -169,5 +184,4 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
 
     layersContainer.append(...containers);
   }
-  // ======================== ANIMATION END ========================
 })();
