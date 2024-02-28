@@ -198,7 +198,7 @@ canvas {
 }
 
 .inspector__layers-layer {
-    height: 50px;
+    height: 30px;
     border-bottom: 2px solid var(--color-surface-mixed-300);
     background: var(--color-surface-mixed-100);
 
@@ -218,6 +218,7 @@ canvas {
 
 .clickable {
     width: 20px;
+    min-width: 20px;
     height: 20px;
     overflow: hidden;
 }
@@ -225,4 +226,42 @@ canvas {
 object {
     width: 100%;
     pointer-events: none;
+}
+
+.ellipsis {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.menu-item {
+    margin: calc(0.25rem - 2px);
+    padding: 0.25rem;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    border: 2px solid transparent;
+    cursor: pointer;
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 26px;
+    left: 0;
+
+    margin: calc(0.25rem - 2px);
+    padding: 0.25rem;
+}
+
+#layers-menu {
+    display: none;
+    position: absolute;
+    background-color: var(--color-surface-200);
+    min-width: 160px;
+    border: 2px solid var(--color-surface-mixed-400);
+    z-index: 1;
+}
+
+#layers-menu.display-block {
+    display: block;
 }
