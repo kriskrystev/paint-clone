@@ -113,11 +113,15 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
 
     animationFrameId = window.requestAnimationFrame(loop);
 
-    const layer = layers.get(currentLayerIndex).val;
-    if (layer.visible) {
-      layer.shapes.forEach((shape) => {
-        shape.draw(context);
-      });
+    let current = layers.head;
+
+    while (current) {
+      if (current.val.visible) {
+        current.val.shapes.forEach((shape) => {
+          shape.draw(context);
+        });
+      }
+      current = current.next;
     }
   }
   animationFrameId = window.requestAnimationFrame(loop);
