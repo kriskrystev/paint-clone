@@ -47,7 +47,6 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
   let currentlySelectedLayer = null;
   const layers = new LinkedList();
   layers.push(new Layer());
-  layers.push(new Layer("aaa"));
 
   displayLayerContainers();
 
@@ -70,9 +69,10 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
       mouseDownDrawStrategy.setBuilder(shapeBuilder);
       currentlyDrawnShape = mouseDownDrawStrategy.initShape();
 
-      console.log(currentlyDrawnShape);
-      layers.get(currentLayerIndex).val.shapes.push(currentlyDrawnShape);
-      drag = true;
+      if (currentlySelectedLayer) {
+        layers.get(currentLayerIndex).val.shapes.push(currentlyDrawnShape);
+        drag = true;
+      }
     }
 
     animationFrameId = window.requestAnimationFrame(loop);
@@ -97,7 +97,7 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
       currentlyDrawnShape.setEnd(x, y);
     }
 
-    if (currentlyDrawnShape) {
+    if (currentlyDrawnShape && currentlySelectedLayer) {
       const lastShapeIdx = layers.get(currentLayerIndex).val.shapes.length - 1;
       layers.get(currentLayerIndex).val.shapes[lastShapeIdx] =
         currentlyDrawnShape;
