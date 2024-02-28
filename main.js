@@ -44,8 +44,11 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
   let currentlyDrawnShape = null;
 
   let currentLayerIndex = 0;
+  let currentlySelectedLayer = null;
   const layers = new LinkedList();
   layers.push(new Layer());
+  layers.push(new Layer("aaa"));
+
   displayLayerContainers();
 
   let animationFrameId = null;
@@ -67,6 +70,7 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
       mouseDownDrawStrategy.setBuilder(shapeBuilder);
       currentlyDrawnShape = mouseDownDrawStrategy.initShape();
 
+      console.log(currentlyDrawnShape);
       layers.get(currentLayerIndex).val.shapes.push(currentlyDrawnShape);
       drag = true;
     }
@@ -93,10 +97,12 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
       currentlyDrawnShape.setEnd(x, y);
     }
 
-    const lastShapeIdx = layers.get(currentLayerIndex).val.shapes.length - 1;
-    layers.get(currentLayerIndex).val.shapes[lastShapeIdx] =
-      currentlyDrawnShape;
-    currentlyDrawnShape = null;
+    if (currentlyDrawnShape) {
+      const lastShapeIdx = layers.get(currentLayerIndex).val.shapes.length - 1;
+      layers.get(currentLayerIndex).val.shapes[lastShapeIdx] =
+        currentlyDrawnShape;
+      currentlyDrawnShape = null;
+    }
   });
 
   // ======================== DRAW HANDLERS END ========================
@@ -125,15 +131,39 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
   function displayLayerContainers() {
     let current = layers.head;
     let containers = [];
+    let prevHtmlElement = null;
+    let layerNumber = 0;
 
     if (!current) return null;
 
     while (current) {
-      containers.push(new LayerHtmlElement(current.val));
+      const newLayerHtmlElement = new LayerHtmlElement(
+        current.val,
+        layerNumber
+      );
+      newLayerHtmlElement.addEventListener("layer-clicked", (e) => {
+        const clickedLayer = e.detail.value().layer;
+
+        if (currentlySelectedLayer === clickedLayer) {
+          return;
+        }
+
+        if (prevHtmlElement) {
+          prevHtmlElement.classList.remove("inspector__layers-layer--selected");
+        }
+
+        newLayerHtmlElement.classList.add("inspector__layers-layer--selected");
+        prevHtmlElement = newLayerHtmlElement;
+
+        currentlySelectedLayer = e.detail.value().layer;
+        currentLayerIndex = e.detail.value().layerNumber;
+      });
+      containers.push(newLayerHtmlElement);
       current = current.next;
+      layerNumber++;
     }
 
-    layersContainer.appendChild(...containers);
+    layersContainer.append(...containers);
   }
   // ======================== ANIMATION END ========================
 })();
