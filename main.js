@@ -167,13 +167,14 @@ import { strategies } from "./strategy/redrawing-shapes/strategies-map.js";
         currentLayerIndex = e.detail.value().layerNumber;
       });
 
-      // layers list must change
-
       newLayerHtmlElement.addEventListener("layer-name-changed", (e) => {
         const { layerNumber, newValue } = e.detail.value();
         layers.get(layerNumber).val.name = newValue;
         const inputElement = newLayerHtmlElement.querySelector("input");
-        inputElement.replaceWith(document.createTextNode(newValue));
+
+        try {
+          inputElement.replaceWith(document.createTextNode(newValue));
+        } catch (e) {}
       });
 
       // ------------- Custom events -------------

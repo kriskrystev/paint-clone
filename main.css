@@ -232,3 +232,36 @@ object {
     text-overflow: ellipsis;
     overflow: hidden;
 }
+
+.menu-item {
+    margin: calc(0.25rem - 2px);
+    padding: 0.25rem;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    border: 2px solid transparent;
+    cursor: pointer;
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 26px;
+    left: 0;
+
+    margin: calc(0.25rem - 2px);
+    padding: 0.25rem;
+}
+
+#layers-menu {
+    display: none;
+    position: absolute;
+    background-color: var(--color-surface-200);
+    min-width: 160px;
+    border: 2px solid var(--color-surface-mixed-400);
+    z-index: 1;
+}
+
+#layers-menu.display-block {
+    display: block;
+}
